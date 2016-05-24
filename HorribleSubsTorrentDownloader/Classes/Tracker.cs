@@ -37,7 +37,7 @@ namespace HorribleSubsTorrentDownloader.Classes
                     //Search for the episode with the corresponding quality
                     int videoQuality = (int)quality;
 
-                    //Horriblesubs episode number listing les than 10 have a 0 before the number, so this will add a 0 before the number if its less than 10
+                    //Horriblesubs episode number listing less than 10 have a 0 before the number. This will check and add the 0 if the episode is less than 10
                     string episode = episodes[i] < 10 ? "0" + episodes[i].ToString() : episodes[i].ToString();
 
                     //Create the xPath based on the episode title and episode number
