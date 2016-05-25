@@ -50,7 +50,7 @@ namespace HorribleSubsTorrentDownloader.Classes
 
                     //Get the torrent link
                     var downloadLinks = children[0].InnerHtml;
-                    var trimBefore = downloadLinks.Substring(downloadLinks.IndexOf("href=\"http://www.nyaa.se/?page=download", 0));
+                    var trimBefore = downloadLinks.Substring(downloadLinks.IndexOf("http://www.nyaa.se/?page=download", 0));
                     var index = trimBefore.IndexOf("\">Torrent</a>");
                     if (index < 0) { Console.WriteLine("Could not retrieve torrent link"); continue; }
                     var torrentLink = trimBefore.Substring(0, index);
