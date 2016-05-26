@@ -14,7 +14,7 @@ namespace HorribleSubsTorrentDownloader.Classes
         {
             return File.Exists(path) || Directory.Exists(path);
         }
-        public static void WriteToAnimeList(string path, Dictionary<int, string> Anime)
+        public static void WriteToAnimeList(string path, Dictionary<string, int> Anime)
         {
             try
             {

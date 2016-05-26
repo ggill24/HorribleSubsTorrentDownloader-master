@@ -5,6 +5,8 @@ using OpenQA.Selenium.PhantomJS;
 using System.Linq;
 using HorribleSubsTorrentDownloader.Enums;
 using System.Text.RegularExpressions;
+using System.Net.Mime;
+using System.Net;
 
 using HtmlAgilityPack;
 using Selenium;
@@ -13,10 +15,10 @@ namespace HorribleSubsTorrentDownloader.Classes
     class Tracker
     {
 
-        public void CheckForNewEpisodes(Dictionary<int, string> anime, TorrentQuality quality)
+        public void CheckForNewEpisodes(Dictionary<string, int> anime, TorrentQuality quality)
         {
-            var titles = anime.Values.ToList();
-            var episodes = anime.Keys.ToList();
+            var titles = anime.Keys.ToList();
+            var episodes = anime.Values.ToList();
             char[] charactersToRemove = new char[] { '!', '?' };
 
             using (var driver = new PhantomJSDriver(Dependencies.PhantomJS))
@@ -53,11 +55,29 @@ namespace HorribleSubsTorrentDownloader.Classes
                     var trimBefore = downloadLinks.Substring(downloadLinks.IndexOf("http://www.nyaa.se/?page=download", 0));
                     var index = trimBefore.IndexOf("\">Torrent</a>");
                     if (index < 0) { Console.WriteLine("Could not retrieve torrent link"); continue; }
-                    var torrentLink = trimBefore.Substring(0, index);
-                    Console.WriteLine(torrentLink);
+                    var torrentLink = trimBefore.Substring(0, index).Replace("amp;", string.Empty);
+                    DownloadTorrent(torrentLink);
                 }
-                Console.ReadKey();
+               
             }
+        }
+        private void DownloadTorrent(string url)
+        {
+
+            HttpWebRequest req = (HttpWebRequest) WebRequest.Create(url);
+            using (HttpWebResponse response = (HttpWebResponse)req.GetResponse())
+            using(WebClient wc = new WebClient())
+            {
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    ContentDisposition contentDisposition = new ContentDisposition(response.Headers["content-disposition"]);
+                    wc.DownloadFile(url, @"C:\Users\" + Environment.UserName + "\\Desktop\\" + "contentDisposition.FileName");
+                    
+                }
+            }
+            
+              
+                
         }
     }
 }

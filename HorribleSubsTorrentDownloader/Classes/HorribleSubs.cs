@@ -19,7 +19,7 @@ namespace HorribleSubsTorrentDownloader.Classes
         //Titles of the animes currently airing
         private List<string> animeTitles;
         //animes to track
-        public Dictionary<int, string> animes;
+        public Dictionary<string, int> animes;
 
         public Tracker animeTracker = new Tracker();
 
@@ -74,7 +74,7 @@ namespace HorribleSubsTorrentDownloader.Classes
                     break;
 
                 case Tasks.TrackAnime:
-                    var list = new Dictionary<int, string>();
+                    var list = new Dictionary<string, int>();
                     using (StreamReader sr = new StreamReader(Path.Combine(FileHandler.directoryPath, "list.txt")))
                     {
                         string[] line = null;
@@ -84,7 +84,7 @@ namespace HorribleSubsTorrentDownloader.Classes
                             line =  sr.ReadLine().Split(' ');
 
                             //TODO: Fail Safe Checks Need To Be Added
-                            list.Add(Convert.ToInt32(line[0]), line[1]);
+                            list.Add(line[0], Convert.ToInt32(line[1]));
                         }
                         
                     }
@@ -165,9 +165,9 @@ namespace HorribleSubsTorrentDownloader.Classes
 
         }
 
-        private Dictionary<int, string> GetAnimesToFollow()
+        private Dictionary<string, int> GetAnimesToFollow()
         {
-            var animesToFollow = new Dictionary<int, string>();
+            var animesToFollow = new Dictionary<string, int>();
 
             Console.WriteLine("-------------------------------------------");
             Console.WriteLine("Write the anime # you would like to follow along with the episode number to start from seperated by space");
@@ -191,15 +191,17 @@ namespace HorribleSubsTorrentDownloader.Classes
 
 
                 int animeNumber = 0;
-                if (!int.TryParse(userInput[0], out animeNumber)) { Console.WriteLine("Invalid Entry"); continue; }
+                if (!int.TryParse(userInput[1], out animeNumber)) { Console.WriteLine("Invalid Entry"); continue; }
 
                 //userInput array should only have a length of 2 since only 2 pieces of information is required (Anime & Episodes
                 //No blank
                 if (userInput.Length != 2 || String.IsNullOrWhiteSpace(userInput[0]) || String.IsNullOrWhiteSpace(userInput[1]) || animeNumber > animeTitles.Count - 1) { Console.WriteLine("Invalid Entry"); continue; }
 
-                if (animesToFollow.ContainsKey(animeNumber)) { Console.WriteLine("You are already following: " + animeTitles[animeNumber]); continue; }
+                if (animesToFollow.ContainsKey(animeTitles[Convert.ToInt32(userInput[0])])) { Console.WriteLine("You are already following: " + animeTitles[animeNumber]); continue; }
+                var toFollow = animeTitles[Convert.ToInt32(userInput[0])];
+                var episodeToFollow = animeNumber;
 
-                animesToFollow.Add(animeNumber, animeTitles[Convert.ToInt32(userInput[0])]);
+                animesToFollow.Add(animeTitles[Convert.ToInt32(userInput[0])], animeNumber);
 
 
             }
