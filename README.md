@@ -22,5 +22,5 @@ Format is: title episode
 
 If you wish to manually add a new anime the spaces must be replaced by dashes ex: shingeki-no-kyojin 1
 
-To terminate the program when it is not visible (Program hides itself when its tracking for new episodes as of now it checks every hour) (Open taskmanager and find Horriblesubsdownloader and click end task)
+To terminate the program when it is not visible (Program hides itself when its tracking for new episodes as of now it checks once every hour) (Open taskmanager and find Horriblesubsdownloader and click end task)
 
