@@ -1,6 +1,8 @@
-# HorribleSubsTorrentDownloader
+# HorribleSubs Tracker
 
-Precompiled: https://www.mediafire.com/?hiw35kzb6ztopjj
+Netframework 4.5.2 or later is required
+
+Precompiled version: https://www.mediafire.com/?hiw35kzb6ztopjj
 
 INSTRUCTIONS
 
