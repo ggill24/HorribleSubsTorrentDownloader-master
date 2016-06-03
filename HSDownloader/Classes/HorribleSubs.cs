@@ -233,8 +233,8 @@ namespace HorribleSubsTorrentDownloader.Classes
                 using (var phantomDriver = new PhantomJSDriver(Dependencies.PhantomJS))
                 {
                     Console.Clear();
-                    Console.WriteLine("Travelling to: " + Dependencies.HSCurrentSeason);
-                    phantomDriver.Navigate().GoToUrl(Dependencies.HSCurrentSeason);
+                    Console.WriteLine("Travelling to: " + url);
+                    phantomDriver.Navigate().GoToUrl(url);
                     htmlFile = phantomDriver.PageSource;
                 }
             }
