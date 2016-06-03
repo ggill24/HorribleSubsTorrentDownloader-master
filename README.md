@@ -1,6 +1,6 @@
 # HorribleSubsTorrentDownloader
 
-Precompiled:
+Precompiled: https://www.mediafire.com/?hiw35kzb6ztopjj
 
 INSTRUCTIONS
 
