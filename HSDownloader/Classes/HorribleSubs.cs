@@ -101,7 +101,7 @@ namespace HorribleSubsTorrentDownloader.Classes
         public TorrentQuality QualityPerf()
         {
             Console.WriteLine("Quality Perference");
-            Console.WriteLine("1. " + TorrentQuality.HD + "\n" + "2. " + TorrentQuality.SUBHD + "\n" + "3. " + TorrentQuality.SUBHD);
+            Console.WriteLine("1. " + TorrentQuality.HD + "\n" + "2. " + TorrentQuality.SUBHD + "\n" + "3. " + TorrentQuality.SD);
 
             int quality = 0;
 

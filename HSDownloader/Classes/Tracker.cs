@@ -39,8 +39,10 @@ namespace HorribleSubsTorrentDownloader.Classes
 
 
                         //Navigate to the show page
-                        string animePage = Path.Combine(Dependencies.HSCurrentSeason, titles[i]);
-                        driver.Navigate().GoToUrl(animePage);
+                        string animePage = Path.Combine(Dependencies.HSCurrentSeason, titles[i]).ToLower();
+
+                        if (!driver.Url.Contains(animePage + "/") || driver.Url.Contains("about:blank")) { driver.Navigate().GoToUrl(animePage); }
+                       
 
                         //Save the html page
                         HtmlDocument doc = new HtmlDocument();
@@ -61,12 +63,12 @@ namespace HorribleSubsTorrentDownloader.Classes
                         HtmlNode node = doc.DocumentNode.SelectSingleNode(xPath);
 
                         //Some animes have multiple revisions for episode 1 which are nammed 01v1 01v2 etc...
-                        if (node == null && episode.Contains("01"))
+                        if (node == null)
                         {
 
-                            for (int j = 1; j < 3; j++)
+                            for (int j = 1; j <= 3; j++)
                             {
-                                string episodeVersion = "01v" + j.ToString();
+                                string episodeVersion = episode + "v" + j.ToString();
                                 xPath = String.Concat("//div[@class= " + "'" + "release-links " + title + "-" + episodeVersion + "-" + videoQuality + "p" + "'" + "]");
                                 node = doc.DocumentNode.SelectSingleNode(xPath);
 
@@ -75,16 +77,18 @@ namespace HorribleSubsTorrentDownloader.Classes
                                     break;
                                 }
                             }
+
+                            if (node == null)
+                            {
+                                Console.WriteLine("Anime: " + title + " not found");
+                                i++;
+                                continue;
+                            }
+
+
                         }
-                                   
-                        if (node == null)
-                        {
-                            Console.WriteLine("Anime: " + title + " not found");
-                            i++;
-                            continue;
-                        }
-                            
-                        
+
+
 
 
                         HtmlNodeCollection children = node.ChildNodes;
