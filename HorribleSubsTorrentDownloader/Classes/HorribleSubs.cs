@@ -8,7 +8,7 @@ using Selenium;
 using System.IO;
 using OpenQA.Selenium.PhantomJS;
 using HorribleSubsTorrentDownloader.Enums;
-
+using System.Runtime.InteropServices;
 
 namespace HorribleSubsTorrentDownloader.Classes
 {
@@ -19,14 +19,17 @@ namespace HorribleSubsTorrentDownloader.Classes
         //Titles of the animes currently airing
         private List<string> animeTitles;
         //animes to track
-        public Dictionary<string, int> animes;
+        private Dictionary<string, int> animes;
 
-        public Tracker animeTracker = new Tracker();
+        private Tracker animeTracker = new Tracker();
+
+
 
         //Determines what the task to perform
-        private Tasks currentTask()
+        public Tasks currentTask()
         {
             Tasks t = Tasks.NoTask;
+            if (!Directory.Exists(FileHandler.directoryPath)) { return Tasks.CreateDirectory; }
             if (!FileHandler.doesAnimeListExist(FileHandler.directoryPath + "list.txt")) return t = Tasks.CreateAnimeList;
             if (!FileHandler.doesAnimeListExist((Path.Combine(FileHandler.directoryPath + "usersettings.txt")))) return t = Tasks.GetQualityPref;
             t = Tasks.TrackAnime;
@@ -34,72 +37,56 @@ namespace HorribleSubsTorrentDownloader.Classes
 
         }
 
-        public HorribleSubs()
-        {
-            switch (currentTask())
+        public void CreateAnimeList()
+        { 
+        
+          
+            Console.WriteLine("Anime list not found");
+            currentSeasonHTML = downloadHTMLFile(Dependencies.HSCurrentSeason);
+
+            /*The if-ception begins!*/
+            //Retrieve the anime titles
+            if (!String.IsNullOrEmpty(currentSeasonHTML))
             {
-                case Tasks.CreateAnimeList:
-                    Console.WriteLine("Anime list not found!");
-                    Thread.Sleep(500);
-                    Console.WriteLine("Welcome, " + Environment.UserName + "." + " Let me go grab the current animes airing so that you can make your selection.");
-                    //Thread.Sleep(4500);
-                    //Download the HTML page containing the animes airing
-                    currentSeasonHTML = downloadHTMLFile(Dependencies.HSCurrentSeason);
+                animeTitles = GetAnimesAiring();
 
-                    /*The if-ception begins!*/
-                    //Retrieve the anime titles
-                    if (!String.IsNullOrEmpty(currentSeasonHTML))
+                //Get animes to follow from user
+                if (animeTitles.Count > 0)
+                {
+                    DisplayAnimeTitles();
+                    animes = GetAnimesToFollow();
+
+                    //Write users selection to text file
+                    if (animes.Count > 0)
                     {
-                        animeTitles = GetAnimesAiring();
-
-                        //Get animes to follow from user
-                        if (animeTitles.Count > 0)
-                        {
-                            DisplayAnimeTitles();
-                            animes = GetAnimesToFollow();
-
-                            //Write users selection to text file
-                            if (animes.Count > 0)
-                            {
-                                FileHandler.WriteToAnimeList(Path.Combine(FileHandler.directoryPath + "list.txt"), animes);
-
-                            }
-                        }
+                        FileHandler.WriteToAnimeList(Path.Combine(FileHandler.directoryPath + "list.txt"), animes);
 
                     }
-                    break;
-
-                case Tasks.GetQualityPref:
-                    FileHandler.WriteQualityToSettings(Path.Combine(FileHandler.directoryPath + "usersettings.txt"), getQualityPerf());
-                    break;
-
-                case Tasks.TrackAnime:
-                    var list = new Dictionary<string, int>();
-                    using (StreamReader sr = new StreamReader(Path.Combine(FileHandler.directoryPath, "list.txt")))
-                    {
-                        string[] line = null;
-                        while (sr.Peek() != -1)
-                        {
-                           
-                            line =  sr.ReadLine().Split(' ');
-
-                            //TODO: Fail Safe Checks Need To Be Added
-                            list.Add(line[0], Convert.ToInt32(line[1]));
-                        }
-                        
-                    }
-                    
-                        
-                    animeTracker.CheckForNewEpisodes(list, TorrentQuality.HD);
-                    break;
-
-                case Tasks.NoTask:
-                    Console.Clear();
-                    Console.WriteLine("No task to perform");
-                    Console.WriteLine("Check your 'C' drive to see if you have a HSTorrentDownloader folder containing 2 text files that ARE NOT EMPTY." + "\n" + "Try deleting either of the files to trigger a task");
-                    break;
+                }
             }
         }
+       
+        public void TrackAnime()
+        {
+            var list = new Dictionary<string, int>();
+            using (StreamReader sr = new StreamReader(Path.Combine(FileHandler.directoryPath, "list.txt")))
+            {
+                string[] line = null;
+
+                while (sr.Peek() != -1)
+                {
+
+                    line = sr.ReadLine().Split(' ');
+
+                    //TODO: Fail Safe Checks Need To Be Added
+                    list.Add(line[0], Convert.ToInt32(line[1]));
+                }
+
+            }
+            animeTracker.CheckForNewEpisodes(list, TorrentQuality.HD);
+        }
+    
+        
 
         private bool isDigitsAndWhiteSpace(string entry)
         {
@@ -111,7 +98,7 @@ namespace HorribleSubsTorrentDownloader.Classes
 
             return false;
         }
-        private TorrentQuality getQualityPerf()
+        public TorrentQuality QualityPerf()
         {
             Console.WriteLine("Quality Perference");
             Console.WriteLine("1. " + TorrentQuality.HD + "\n" + "2. " + TorrentQuality.SUBHD + "\n" + "3. " + TorrentQuality.SUBHD);
@@ -148,23 +135,16 @@ namespace HorribleSubsTorrentDownloader.Classes
 
         private void DisplayAnimeTitles()
         {
-            try
-            {
-                for (int i = 0; i < animeTitles.Count; i++)
-                {
-                    StringBuilder sb = new StringBuilder();
-                    sb.Append(i.ToString() + ". " + animeTitles[i]);
-                    Console.WriteLine(sb);
-                }
-                Console.WriteLine("Animes Found Currently Airing: " + animeTitles.Count);
-            }
-            catch (IndexOutOfRangeException outOfRangeEx)
-            {
-                Console.WriteLine(outOfRangeEx.Message);
-            }
 
+            for (int i = 0; i < animeTitles.Count; i++)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append(i.ToString() + ". " + animeTitles[i]);
+                Console.WriteLine(sb);
+            }
+            Console.WriteLine("Animes Found Currently Airing: " + animeTitles.Count);
         }
-
+    
         private Dictionary<string, int> GetAnimesToFollow()
         {
             var animesToFollow = new Dictionary<string, int>();
@@ -182,26 +162,33 @@ namespace HorribleSubsTorrentDownloader.Classes
             {
                 //User input with no modification
                 string userInputRAW = Console.ReadLine();
-                if (userInputRAW == "exit") { break; }
+                if (userInputRAW.ToLower() == "exit") { break; }
 
 
                 if (!isDigitsAndWhiteSpace(userInputRAW)) { Console.WriteLine("Numbers only"); continue; }
                 //Anime Number & Episode
                 string[] userInput = userInputRAW.Split(' ');
 
-
-                int animeNumber = 0;
-                if (!int.TryParse(userInput[1], out animeNumber)) { Console.WriteLine("Invalid Entry"); continue; }
-
                 //userInput array should only have a length of 2 since only 2 pieces of information is required (Anime & Episodes
                 //No blank
-                if (userInput.Length != 2 || String.IsNullOrWhiteSpace(userInput[0]) || String.IsNullOrWhiteSpace(userInput[1]) || animeNumber > animeTitles.Count - 1) { Console.WriteLine("Invalid Entry"); continue; }
+                if (userInput.Length != 2 || String.IsNullOrWhiteSpace(userInput[0]) || String.IsNullOrWhiteSpace(userInput[1])) { Console.WriteLine("Invalid Entry"); continue; }
 
-                if (animesToFollow.ContainsKey(animeTitles[Convert.ToInt32(userInput[0])])) { Console.WriteLine("You are already following: " + animeTitles[animeNumber]); continue; }
-                var toFollow = animeTitles[Convert.ToInt32(userInput[0])];
-                var episodeToFollow = animeNumber;
+                int animeTitle = 0;
+                int animeNumber = 0;
 
-                animesToFollow.Add(animeTitles[Convert.ToInt32(userInput[0])], animeNumber);
+                if (!int.TryParse(userInput[0], out animeTitle) || !int.TryParse(userInput[1], out animeNumber))  { Console.WriteLine("Invalid Entry"); continue; }
+
+                if (animeTitle > animeTitles.Count - 1) { Console.WriteLine("anime number: " + animeTitle + " does not exist"); continue; }
+
+                if (animesToFollow.Count > 1)
+                {
+
+                    if (animesToFollow.ContainsKey(animeTitles[animeTitle])) { Console.WriteLine("You are already following: " + animeTitles[animeTitle]); continue; }
+                   
+                }
+                animesToFollow.Add(animeTitles[animeTitle], animeNumber);
+
+
 
 
             }
@@ -231,7 +218,7 @@ namespace HorribleSubsTorrentDownloader.Classes
             catch (NullReferenceException)
             {
                 Console.WriteLine("Could not find any animes");
-                Thread.Sleep(2000);
+                Thread.Sleep(1850);
             }
 
             return animesTitles;
@@ -251,11 +238,8 @@ namespace HorribleSubsTorrentDownloader.Classes
                     htmlFile = phantomDriver.PageSource;
                 }
             }
-            catch (SeleniumException SEexception)
-            {
-                Console.WriteLine(SEexception.Message);
-                Thread.Sleep(5000);
-            }
+            //Sometimes Selenium runs into errors. Though the program runs on a loop of tasks to perform so it is ok to leaves this catch unhandled
+            catch (SeleniumException) { }
 
             return htmlFile;
 
@@ -263,3 +247,5 @@ namespace HorribleSubsTorrentDownloader.Classes
 
     }
 }
+
+

@@ -5,6 +5,7 @@
         CreateAnimeList,
         GetQualityPref,
         TrackAnime,
+        CreateDirectory,
         NoTask
     }
 

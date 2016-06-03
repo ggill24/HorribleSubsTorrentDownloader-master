@@ -4,85 +4,133 @@ using System.IO;
 using OpenQA.Selenium.PhantomJS;
 using System.Linq;
 using HorribleSubsTorrentDownloader.Enums;
-using System.Text.RegularExpressions;
 using System.Net.Mime;
 using System.Net;
-
+using System.Threading;
 using HtmlAgilityPack;
-using Selenium;
+
+
 namespace HorribleSubsTorrentDownloader.Classes
 {
     class Tracker
     {
 
+       
+
         public void CheckForNewEpisodes(Dictionary<string, int> anime, TorrentQuality quality)
         {
             var titles = anime.Keys.ToList();
             var episodes = anime.Values.ToList();
-            char[] charactersToRemove = new char[] { '!', '?' };
-
-            using (var driver = new PhantomJSDriver(Dependencies.PhantomJS))
+         
+            var episodeDlLinks = new List<string>();
+            try
             {
-                Console.Clear();
-
-                for (int i = 0; i < titles.Count; i++)
+                using (var driver = new PhantomJSDriver(Dependencies.PhantomJS))
                 {
+                    driver.Manage().Timeouts().SetPageLoadTimeout(new TimeSpan(0, 0, 0, 45));
+                    Console.Clear();
 
-                    //Navigate to the show page
-                    string animePage = Path.Combine(Dependencies.HSCurrentSeason, titles[i]);
-                    driver.Navigate().GoToUrl(animePage);
+                    //i only increments when no episode for the current anime is found
+                    //This allows to go through each anime, find all the available episodes and download them at once which then the program can sleep for an hour before checking again
+                    //This is to reduce network/cpu usage to a minimum
+                    for (int i = 0; i < titles.Count;)
+                    {
 
-                    //Save the html page
-                    HtmlDocument doc = new HtmlDocument();
-                    doc.LoadHtml(driver.PageSource);
 
-                    //Search for the episode with the corresponding quality
-                    int videoQuality = (int)quality;
+                        //Navigate to the show page
+                        string animePage = Path.Combine(Dependencies.HSCurrentSeason, titles[i]);
+                        driver.Navigate().GoToUrl(animePage);
 
-                    //Horriblesubs episode number listing less than 10 have a 0 before the number. This will check and add the 0 if the episode is less than 10
-                    string episode = episodes[i] < 10 ? "0" + episodes[i].ToString() : episodes[i].ToString();
+                        //Save the html page
+                        HtmlDocument doc = new HtmlDocument();
+                        doc.LoadHtml(driver.PageSource);
 
-                    //Create the xPath based on the episode title and episode number
-                    string xPath = String.Concat("//div[@class= " + "'" + "release-links " + titles[i].ToLower() + "-" + episode + "-" + videoQuality + "p" + "'" + "]");
-                    HtmlNode node = doc.DocumentNode.SelectSingleNode(xPath);
+                        //Search for the episode with the corresponding quality
+                        int videoQuality = (int)quality;
 
-                    if (node == null) { Console.WriteLine("Anime: " + titles[i] + " not found"); continue; }
+                        //Horriblesubs episode number listing less than 10 have a 0 before the number. This will check and add the 0 if the episode is less than 10
+                        string episode = episodes[i] < 10 ? "0" + episodes[i].ToString() : episodes[i].ToString();
 
-                    HtmlNodeCollection children = node.ChildNodes;
+                        //dashes take place of exclamation marks in the HTML document
+                        //So titles with ! need to be replaced with - to be able to find them
+                        string title = titles[i].ToLower().Replace("!", "-");
 
-                    //Get the torrent link
-                    var downloadLinks = children[0].InnerHtml;
-                    var trimBefore = downloadLinks.Substring(downloadLinks.IndexOf("http://www.nyaa.se/?page=download", 0));
-                    var index = trimBefore.IndexOf("\">Torrent</a>");
-                    if (index < 0) { Console.WriteLine("Could not retrieve torrent link"); continue; }
-                    var torrentLink = trimBefore.Substring(0, index).Replace("amp;", string.Empty);
-                    DownloadTorrent(torrentLink);
+                        //Create the xPath based on the episode title and episode number
+                        string xPath = String.Concat("//div[@class= " + "'" + "release-links " + title + "-" + episode + "-" + videoQuality + "p" + "'" + "]");
+                        HtmlNode node = doc.DocumentNode.SelectSingleNode(xPath);
+
+                        if (node == null) { Console.WriteLine("Anime: " + title + " not found"); i++; continue; }
+
+                        HtmlNodeCollection children = node.ChildNodes;
+
+                        //Retrieve the torrent link
+                        var downloadLinks = children[0].InnerHtml;
+                        var trimBefore = downloadLinks.Substring(downloadLinks.IndexOf("http://www.nyaa.se/?page=download", 0));
+                        var index = trimBefore.IndexOf("\">Torrent</a>");
+                        if (index < 0) { Console.WriteLine("Could not retrieve torrent link"); continue; }
+                        var torrentLink = trimBefore.Substring(0, index).Replace("amp;", string.Empty);
+                        //episodeDlLinks.Add(torrentLink);
+
+                        //move onto the next episode for the anime
+                        if (DownloadTorrent(torrentLink))
+                        {
+                            episodes[i] += 1;
+                            FileHandler.UpdateEpisode(titles, episodes);
+                            continue;
+
+                        }
+                    }
                 }
-               
             }
+            catch (Selenium.SeleniumException se) { }
+
+           
         }
-        private void DownloadTorrent(string url)
+        private bool DownloadTorrent(string url)
         {
 
-            HttpWebRequest req = (HttpWebRequest) WebRequest.Create(url);
-            using (HttpWebResponse response = (HttpWebResponse)req.GetResponse())
-            using(WebClient wc = new WebClient())
+
+            try
             {
-                if (response.StatusCode == HttpStatusCode.OK)
+                HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
+                using (HttpWebResponse response = (HttpWebResponse)req.GetResponse())
+                using (WebClient wc = new WebClient())
                 {
-                    ContentDisposition contentDisposition = new ContentDisposition(response.Headers["content-disposition"]);
-                    wc.DownloadFile(url, @"C:\Users\" + Environment.UserName + "\\Desktop\\" + "contentDisposition.FileName");
-                    
+                    if (response.StatusCode == HttpStatusCode.OK)
+                    {
+                        //Name of the torrent is located in the content disposition
+                        ContentDisposition contentDisposition = new ContentDisposition(response.Headers["content-disposition"]);
+                        string fileName = Path.Combine(FileHandler.directoryPath, contentDisposition.FileName);
+                        wc.DownloadFile(new Uri(url), fileName);
+                        System.Diagnostics.Process.Start(fileName);
+                        Thread.Sleep(1000);
+                        File.Delete(fileName);
+                        return true;
+                        
+
+                    }
                 }
             }
-            
-              
-                
+            catch (WebException)
+            {
+                Console.WriteLine("Unable to download from: " + url);
+            }
+            return false;
         }
     }
 }
+        
 
-                   
+
+
+
+
+
+
+
+
+
+
 
 
 

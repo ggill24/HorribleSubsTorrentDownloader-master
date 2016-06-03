@@ -44,16 +44,6 @@ namespace HorribleSubsTorrentDownloader.Classes
                 Console.WriteLine("Error: Directory: " + directoryPath + "does not exist" + "\n" + diNotFound.Message);
                 Thread.Sleep(5000);
             }
-            catch (UnauthorizedAccessException uaeException)
-            {
-                Console.WriteLine(uaeException.Message);
-                Thread.Sleep(5000);
-            }
-            catch (IOException)
-            {
-                Console.WriteLine("Error: File is being used by another process.");
-                Thread.Sleep(2500);
-            }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
@@ -85,12 +75,53 @@ namespace HorribleSubsTorrentDownloader.Classes
                 Console.WriteLine("Directory: " + directoryPath + "does not exist" + "\n" + diNotFound.Message);
                 Thread.Sleep(5000);
             }
-            catch (UnauthorizedAccessException uaeException)
-            {
-                Console.WriteLine(uaeException.Message);
-                Thread.Sleep(5000);
-            }
+            
         }
+        public static void UpdateEpisode(List<string> anime, List<int> Nextepisode)
+        {
+            List<string> animeList = new List<string>();
+            try
+            {
+                for (int i = 0; i < Nextepisode.Count; i++)
+                {
+                    int episode = Nextepisode[i];
+                    animeList.Add(String.Concat(anime[i], " ", episode.ToString()));
+                }
+                if (File.Exists(Path.Combine(directoryPath, "list.txt"))) { File.Delete((Path.Combine(directoryPath, "list.txt"))); }
+                File.WriteAllLines(Path.Combine(directoryPath, "list.txt"), animeList.ToArray());
 
+            }
+            catch (DirectoryNotFoundException)
+            {
+                Console.WriteLine("Anime list is missing....creating new one");
+                var fs = File.Create(Path.Combine(directoryPath));
+                fs.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+        }
+        public static void CreateDirectory(string path)
+        {
+            if (Directory.Exists(path))
+            {
+                Console.WriteLine(path + " already exists");
+                return;
+            }
+
+        }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
