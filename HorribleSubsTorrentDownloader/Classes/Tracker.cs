@@ -15,13 +15,13 @@ namespace HorribleSubsTorrentDownloader.Classes
     class Tracker
     {
 
-       
+
 
         public void CheckForNewEpisodes(Dictionary<string, int> anime, TorrentQuality quality)
         {
             var titles = anime.Keys.ToList();
             var episodes = anime.Values.ToList();
-         
+
             var episodeDlLinks = new List<string>();
             try
             {
@@ -83,9 +83,17 @@ namespace HorribleSubsTorrentDownloader.Classes
                 }
             }
             catch (Selenium.SeleniumException se) { }
+            catch (OpenQA.Selenium.DriverServiceNotFoundException)
+            {
+                Console.WriteLine("PhantomJS must be placed in: " + FileHandler.directoryPath);
+                Console.WriteLine("You can download PhantJS from: " + "http://phantomjs.org/download.html");
+            }
+            
+        }
+            
 
            
-        }
+        
         private bool DownloadTorrent(string url)
         {
 

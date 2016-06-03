@@ -240,6 +240,11 @@ namespace HorribleSubsTorrentDownloader.Classes
             }
             //Sometimes Selenium runs into errors. Though the program runs on a loop of tasks to perform so it is ok to leaves this catch unhandled
             catch (SeleniumException) { }
+            catch (OpenQA.Selenium.DriverServiceNotFoundException)
+            {
+                Console.WriteLine("PhantomJS must be placed in: " + FileHandler.directoryPath);
+                Console.WriteLine("You can download PhantJS from: " + "http://phantomjs.org/download.html");
+            }
 
             return htmlFile;
 
