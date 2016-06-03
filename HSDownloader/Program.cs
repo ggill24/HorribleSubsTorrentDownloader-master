@@ -62,8 +62,9 @@ namespace HorribleSubsTorrentDownloade
                         Thread.Sleep(1250);
                         break;
                     case Tasks.TrackAnime:
-                        ShowWindow(GetConsoleWindow(), SW_HIDE);
+                        ShowWindow(GetConsoleWindow(), SW_SHOW);
                         hs.TrackAnime();
+                        ShowWindow(GetConsoleWindow(), SW_HIDE);
                         Thread.Sleep(3600000);
                         break;
                 }

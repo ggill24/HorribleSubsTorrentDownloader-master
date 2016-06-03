@@ -100,11 +100,14 @@ namespace HorribleSubsTorrentDownloader.Classes
                         //move onto the next episode for the anime
                         if (DownloadTorrent(torrentLink))
                         {
+                            Console.WriteLine(title + episode.ToString() + " downloaded");
+                            Thread.Sleep(1000);
                             episodes[i] += 1;
                             FileHandler.UpdateEpisode(titles, episodes);
                             continue;
 
                         }
+
                     }
                 }
             }
