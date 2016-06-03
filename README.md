@@ -16,11 +16,11 @@ INSTRUCTIONS
 
 I suggest tracking an anime from episode 2 onwards as horriblesubs sometimes creates multiple names for episode 1 ex: 1v1 1v2 which this program cant distinguish as of yet.
 
-To make changes to your anime list or to add a new anime simple edit the list.txt file located in: C:\HSTorrentDownloader
+To make changes to your anime list or to add a new anime simple edit the list.txt file located in: C:\HSTorrentDownloader or delete it and restart the program
 
 Format is: title episode
 
 If you wish to manually add a new anime the spaces must be replaced by dashes ex: shingeki-no-kyojin 1
 
-Terminate the program and re-run it (Open taskmanager and find Horriblesubsdownloader and end task)
+To terminate the program when it is not visible (Program hides itself when its tracking for new episodes as of now it checks every hour) (Open taskmanager and find Horriblesubsdownloader and click end task)
 
