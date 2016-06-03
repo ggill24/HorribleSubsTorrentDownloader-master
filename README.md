@@ -5,6 +5,8 @@
 PhantomJS is required (included in the precompiled version):
 http://phantomjs.org/
 
+Torrent client installed (tested and works with qBittorrent) though it should work with any as long as torrent files are associated with your torrent client.
+
 Precompiled version: https://www.mediafire.com/?hiw35kzb6ztopjj
 
 INSTRUCTIONS
