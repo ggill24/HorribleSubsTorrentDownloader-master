@@ -47,15 +47,19 @@ namespace HorribleSubsTorrentDownloade
                 switch (currentTask)
                 {
                     case Tasks.CreateDirectory:
+                        ShowWindow(GetConsoleWindow(), SW_SHOW);
                         FileHandler.CreateDirectory(FileHandler.directoryPath);
                         break;
                     case Tasks.GetQualityPref:
+                        ShowWindow(GetConsoleWindow(), SW_SHOW);
                         FileHandler.WriteQualityToSettings(Path.Combine(FileHandler.directoryPath, "usersettings.txt"), hs.QualityPerf());
                         break;
                     case Tasks.CreateAnimeList:
+                        ShowWindow(GetConsoleWindow(), SW_SHOW);
                         hs.CreateAnimeList();
                         break;
                     case Tasks.TrackAnime:
+                        ShowWindow(GetConsoleWindow(), SW_HIDE);
                         hs.TrackAnime();
                         Thread.Sleep(3600000);
                         break;
