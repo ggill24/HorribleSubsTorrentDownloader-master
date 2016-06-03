@@ -12,5 +12,5 @@ INSTRUCTIONS
 
 4. Rerun the program and a firewall prompt will appear asking for permission for PhantomJS
 
-5. You must allow it for it to work
+5. You must allow it for it to work.
 
