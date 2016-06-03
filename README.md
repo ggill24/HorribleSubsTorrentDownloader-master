@@ -18,9 +18,10 @@ I suggest tracking an anime from episode 2 onwards as horriblesubs sometimes cre
 
 To make changes to your anime list or to add a new anime simply edit the list.txt file located in: C:\HSTorrentDownloader or delete it and restart the program
 
-Format is: title episode
+Format is: [TITLE] [EPISODE]
 
 If you wish to manually add a new anime the spaces must be replaced by dashes ex: shingeki-no-kyojin 1
 
-To terminate the program when it is not visible (Program hides itself when its tracking for new episodes as of now it checks once every hour) (Open taskmanager and find Horriblesubsdownloader and click end task)
+The program hides itself from view when it is tracking for new episodes, to terminate the program when it is not visible simply open task manager and search for the process: "Horriblesubsdownloader" and right click end task
 
+New episodes are checked once every hour. If you wish to modify it download the source.
