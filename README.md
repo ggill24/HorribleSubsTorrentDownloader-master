@@ -12,7 +12,7 @@ INSTRUCTIONS
 
 4. Rerun the program and a firewall prompt will appear asking for permission for PhantomJS
 
-5. You must allow it for it to work..
+5. You must allow it for it to work
 
 I suggest tracking an anime from episode 2 onwards as horriblesubs sometimes creates multiple names for episode 1 ex: 1v1 1v2 which this program cant distinguish as of yet.
 
