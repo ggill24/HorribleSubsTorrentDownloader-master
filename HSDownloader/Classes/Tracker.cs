@@ -30,6 +30,7 @@ namespace HorribleSubsTorrentDownloader.Classes
                     driver.Manage().Timeouts().SetPageLoadTimeout(new TimeSpan(0, 0, 0, 45));
                     Console.Clear();
 
+
                     //i only increments when no episode for the current anime is found
                     //This allows to go through each anime, find all the available episodes and download them at once which then the program can sleep for an hour before checking again
                     //This is to reduce network/cpu usage to a minimum
@@ -59,7 +60,32 @@ namespace HorribleSubsTorrentDownloader.Classes
                         string xPath = String.Concat("//div[@class= " + "'" + "release-links " + title + "-" + episode + "-" + videoQuality + "p" + "'" + "]");
                         HtmlNode node = doc.DocumentNode.SelectSingleNode(xPath);
 
-                        if (node == null) { Console.WriteLine("Anime: " + title + " not found"); i++; continue; }
+                        //Some animes have multiple revisions for episode 1 which are nammed 01v1 01v2 etc...
+                        if (node == null && episode.Contains("01"))
+                        {
+
+                            for (int j = 1; j < 3; j++)
+                            {
+                                string episodeVersion = "01v" + j.ToString();
+                                xPath = String.Concat("//div[@class= " + "'" + "release-links " + title + "-" + episodeVersion + "-" + videoQuality + "p" + "'" + "]");
+                                node = doc.DocumentNode.SelectSingleNode(xPath);
+
+                                if (node != null)
+                                {
+                                    break;
+                                }
+                            }
+                        }
+                                   
+                        if (node == null)
+                        {
+                            Console.WriteLine("Anime: " + title + " not found");
+                            i++;
+                            continue;
+                        }
+                            
+                        
+
 
                         HtmlNodeCollection children = node.ChildNodes;
 
