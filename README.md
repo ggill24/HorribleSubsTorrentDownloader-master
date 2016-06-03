@@ -19,8 +19,6 @@ INSTRUCTIONS
 
 5. You must allow as the program uses PhantomJS to retrieve and download the anime episodes
 
-I suggest tracking an anime from episode 2 onwards as horriblesubs sometimes creates multiple names for episode 1 ex: 1v1 1v2 which this program cant distinguish as of yet.
-
 To make changes to your anime list or to add a new anime simply edit the list.txt file located in: C:\HSTorrentDownloader or delete it and restart the program
 
 Format is: [TITLE] [EPISODE]
