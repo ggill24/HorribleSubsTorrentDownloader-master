@@ -110,6 +110,16 @@ namespace HorribleSubsTorrentDownloader.Classes
                 Console.WriteLine(path + " already exists");
                 return;
             }
+            try
+            {
+                Directory.CreateDirectory(FileHandler.directoryPath);
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Could not create: " + FileHandler.directoryPath);
+                Console.WriteLine("Manually create the folder in your C: drive, name it the following: " + FileHandler.directoryPath);
+            }
+
 
         }
     }

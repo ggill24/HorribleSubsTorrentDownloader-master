@@ -82,11 +82,13 @@ namespace HorribleSubsTorrentDownloader.Classes
                     }
                 }
             }
-            catch (Selenium.SeleniumException se) { }
+            catch (Selenium.SeleniumException) { }
+            catch (OpenQA.Selenium.WebDriverTimeoutException) { }
             catch (OpenQA.Selenium.DriverServiceNotFoundException)
             {
                 Console.WriteLine("PhantomJS must be placed in: " + FileHandler.directoryPath);
                 Console.WriteLine("You can download PhantJS from: " + "http://phantomjs.org/download.html");
+                Console.ReadKey();
             }
             
         }

@@ -153,7 +153,7 @@ namespace HorribleSubsTorrentDownloader.Classes
             Console.WriteLine("Write the anime # you would like to follow along with the episode number to start from seperated by space");
             Console.WriteLine("For more than one anime, seperate by a new line using SPACEBAR");
             Console.WriteLine("Example:");
-            Console.WriteLine("3 " + "0" + " Would start tracking: " + animeTitles[0] + " from episode 3 onwards");
+            Console.WriteLine("0 " + "3" + " Would start tracking: " + animeTitles[0] + " from episode 3 onwards");
             Console.WriteLine("--------------------------------------------");
             Console.WriteLine("Type EXIT when finished");
 
@@ -240,10 +240,12 @@ namespace HorribleSubsTorrentDownloader.Classes
             }
             //Sometimes Selenium runs into errors. Though the program runs on a loop of tasks to perform so it is ok to leaves this catch unhandled
             catch (SeleniumException) { }
+            catch (OpenQA.Selenium.WebDriverTimeoutException) { }
             catch (OpenQA.Selenium.DriverServiceNotFoundException)
             {
                 Console.WriteLine("PhantomJS must be placed in: " + FileHandler.directoryPath);
                 Console.WriteLine("You can download PhantJS from: " + "http://phantomjs.org/download.html");
+                Console.ReadKey();
             }
 
             return htmlFile;
