@@ -1,6 +1,9 @@
 # HorribleSubs Tracker
 
-Netframework 4.5.2 or later is required
+.Net Framework 4.5.2 or later is required
+
+PhantomJS is required (included in the precompiled version):
+http://phantomjs.org/
 
 Precompiled version: https://www.mediafire.com/?hiw35kzb6ztopjj
 
