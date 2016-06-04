@@ -3,7 +3,7 @@ using System.Threading;
 using HorribleSubsTorrentDownloader.Classes;
 using HorribleSubsTorrentDownloader.Enums;
 using System.IO;
-using System.Threading.Tasks;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 
@@ -32,6 +32,8 @@ namespace HorribleSubsTorrentDownloade
 
         const int SW_HIDE = 0;
         const int SW_SHOW = 5;
+
+     
 
 
         static void Main(string[] args)
@@ -69,6 +71,11 @@ namespace HorribleSubsTorrentDownloade
                         break;
                 }
             }
+        }
+        public static void RestartApplication()
+        {
+            var assembly = Assembly.GetExecutingAssembly().Location;
+            System.Diagnostics.Process.Start(assembly);
         }
     }
 }

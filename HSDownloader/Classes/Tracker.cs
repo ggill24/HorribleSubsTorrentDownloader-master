@@ -4,6 +4,7 @@ using System.IO;
 using OpenQA.Selenium.PhantomJS;
 using System.Linq;
 using HorribleSubsTorrentDownloader.Enums;
+using HorribleSubsTorrentDownloade;
 using System.Net.Mime;
 using System.Net;
 using System.Threading;
@@ -27,7 +28,7 @@ namespace HorribleSubsTorrentDownloader.Classes
             {
                 using (var driver = new PhantomJSDriver(Dependencies.PhantomJS))
                 {
-                    driver.Manage().Timeouts().SetPageLoadTimeout(new TimeSpan(0, 0, 0, 45));
+                    driver.Manage().Timeouts().SetPageLoadTimeout(new TimeSpan(0, 0, 2, 0));
                     Console.Clear();
 
 
@@ -39,9 +40,9 @@ namespace HorribleSubsTorrentDownloader.Classes
 
 
                         //Navigate to the show page
-                        string animePage = Path.Combine(Dependencies.HSCurrentSeason, titles[i]).ToLower();
+                        string animePage = Path.Combine(Dependencies.HSCurrentSeason, titles[i]).ToLower() + "/";
 
-                        if (!driver.Url.Contains(animePage + "/") || driver.Url.Contains("about:blank")) { driver.Navigate().GoToUrl(animePage); }
+                        if (!driver.Url.Contains(animePage) || driver.Url.Contains("about:blank")) { driver.Navigate().GoToUrl(animePage); }
                        
 
                         //Save the html page
@@ -115,8 +116,8 @@ namespace HorribleSubsTorrentDownloader.Classes
                     }
                 }
             }
-            catch (Selenium.SeleniumException) { }
-            catch (OpenQA.Selenium.WebDriverTimeoutException) { }
+            catch (Selenium.SeleniumException) { Program.RestartApplication(); }
+            catch (OpenQA.Selenium.WebDriverTimeoutException) { Program.RestartApplication(); }
             catch (OpenQA.Selenium.DriverServiceNotFoundException)
             {
                 Console.WriteLine("PhantomJS must be placed in: " + FileHandler.directoryPath);

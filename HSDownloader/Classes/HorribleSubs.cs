@@ -8,7 +8,7 @@ using Selenium;
 using System.IO;
 using OpenQA.Selenium.PhantomJS;
 using HorribleSubsTorrentDownloader.Enums;
-using System.Runtime.InteropServices;
+using HorribleSubsTorrentDownloade;
 
 namespace HorribleSubsTorrentDownloader.Classes
 {
@@ -233,14 +233,15 @@ namespace HorribleSubsTorrentDownloader.Classes
                 using (var phantomDriver = new PhantomJSDriver(Dependencies.PhantomJS))
                 {
                     Console.Clear();
+                    phantomDriver.Manage().Timeouts().SetPageLoadTimeout(new TimeSpan(0, 0, 2, 0, 0));
                     Console.WriteLine("Travelling to: " + url);
                     phantomDriver.Navigate().GoToUrl(url);
                     htmlFile = phantomDriver.PageSource;
                 }
             }
             //Sometimes Selenium runs into errors. Though the program runs on a loop of tasks to perform so it is ok to leaves this catch unhandled
-            catch (SeleniumException) { }
-            catch (OpenQA.Selenium.WebDriverTimeoutException) { }
+            catch (SeleniumException) { Program.RestartApplication(); }
+            catch (OpenQA.Selenium.WebDriverTimeoutException) { Program.RestartApplication(); }
             catch (OpenQA.Selenium.DriverServiceNotFoundException)
             {
                 Console.WriteLine("PhantomJS must be placed in: " + FileHandler.directoryPath);
