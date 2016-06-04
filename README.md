@@ -33,4 +33,4 @@ If you wish for this program to automatically start when your computer boots pla
 
 C:\Users\(username)\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup
 
-New episodes are checked once every hour. You can change this by download the source and changing the sleep timer in the program class.
+New episodes are checked once every hour. You can change this by downloading the source and changing the sleep timer in the program class.
