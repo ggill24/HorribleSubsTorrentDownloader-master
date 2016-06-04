@@ -29,8 +29,8 @@ If you wish to manually add a new anime the spaces must be replaced by dashes ex
 
 The program hides itself from view when it is tracking for new episodes, to terminate the program when it is not visible simply open task manager and search for the process: "Horriblesubsdownloader" and right click end task
 
-If you wish for this program to automatically start when your computer boots place it in the startup folder located :
+If you wish for this program to automatically start when your computer boots place it in the startup folder located in:
 
 C:\Users\(username)\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup
 
-New episodes are checked once every hour. If you wish to modify it download the source
+New episodes are checked once every hour. You can change this by download the source and changing the sleep timer in the program class.
