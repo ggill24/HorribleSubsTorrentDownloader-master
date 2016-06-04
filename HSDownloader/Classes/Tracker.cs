@@ -81,7 +81,7 @@ namespace HorribleSubsTorrentDownloader.Classes
 
                             if (node == null)
                             {
-                                Console.WriteLine("Anime: " + title + " not found");
+                                Console.WriteLine("Anime: " + title + "");
                                 i++;
                                 continue;
                             }
