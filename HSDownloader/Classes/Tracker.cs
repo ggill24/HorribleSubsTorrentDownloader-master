@@ -81,7 +81,8 @@ namespace HorribleSubsTorrentDownloader.Classes
 
                             if (node == null)
                             {
-                                Console.WriteLine("Anime: " + title + "");
+                                int e = Convert.ToInt32(episode) + 1;
+                                Console.WriteLine("Anime: " + title + "episode: " + e + " is not yet released or not found" );
                                 i++;
                                 continue;
                             }
