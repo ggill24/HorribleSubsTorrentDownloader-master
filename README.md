@@ -13,7 +13,7 @@ INSTRUCTIONS
 
 1. Run the program once
 
-2. A folder in your C: will be created named "HSTorrentDownloader"
+2. A folder in your "C:\" will be created named "HSTorrentDownloader"
 
 3. Place PhantomJS into that folder
 
@@ -21,7 +21,7 @@ INSTRUCTIONS
 
 5. You must allow as the program uses PhantomJS to retrieve and download the anime episodes
 
-To make changes to your anime list or to add a new anime simply edit the list.txt file located in: C:\HSTorrentDownloader or delete it and restart the program
+To make changes to your anime list or to add a new anime simply edit the "list.txt" file located in: "C:\HSTorrentDownloader" or delete it and restart the program
 
 Format is: [TITLE] [EPISODE]
 
