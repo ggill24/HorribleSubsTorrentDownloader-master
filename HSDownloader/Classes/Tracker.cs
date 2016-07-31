@@ -11,12 +11,13 @@ using System.Threading;
 using HtmlAgilityPack;
 
 
+
 namespace HorribleSubsTorrentDownloader.Classes
 {
     class Tracker
     {
 
-
+        char[] blackListedCharacters = new char[] { '!', '?' };
 
         public void CheckForNewEpisodes(Dictionary<string, int> anime, TorrentQuality quality)
         {
@@ -28,9 +29,10 @@ namespace HorribleSubsTorrentDownloader.Classes
             {
                 using (var driver = new PhantomJSDriver(Dependencies.PhantomJS))
                 {
+                    
                     driver.Manage().Timeouts().SetPageLoadTimeout(new TimeSpan(0, 0, 2, 0));
-                    Console.Clear();
 
+                    Console.Clear();
 
                     //i only increments when no episode for the current anime is found
                     //This allows to go through each anime, find all the available episodes and download them at once which then the program can sleep for an hour before checking again
@@ -41,9 +43,9 @@ namespace HorribleSubsTorrentDownloader.Classes
 
                         //Navigate to the show page
                         string animePage = Path.Combine(Dependencies.HSCurrentSeason, titles[i]).ToLower() + "/";
+                        driver.Url = animePage;
+                        if (!driver.Url.Contains(animePage) || driver.Url.Contains("about:blank")) { driver.Navigate().GoToUrl(animePage); Console.WriteLine(driver.Url); }
 
-                        if (!driver.Url.Contains(animePage) || driver.Url.Contains("about:blank")) { driver.Navigate().GoToUrl(animePage); }
-                       
 
                         //Save the html page
                         HtmlDocument doc = new HtmlDocument();
@@ -57,7 +59,21 @@ namespace HorribleSubsTorrentDownloader.Classes
 
                         //dashes take place of exclamation marks in the HTML document
                         //So titles with ! need to be replaced with - to be able to find them
-                        string title = titles[i].ToLower().Replace("!", "-");
+                        string title = titles[i].ToLower();
+
+                        //Clean up the anime title for querying in the HTML page
+                        if (blackListedCharacters.Any(titles[i].Contains))
+                        {
+
+                            while (blackListedCharacters.Any(title.Contains))
+                            {
+                                var charToReplace = titles[i].ElementAt(titles[i].IndexOfAny(blackListedCharacters));
+                                title = titles[i].Replace(charToReplace, '-');
+                            }
+                             
+
+                        }
+                        //string title = titles[i].ToLower().Replace("!", "-");
 
                         //Create the xPath based on the episode title and episode number
                         string xPath = String.Concat("//div[@class= " + "'" + "release-links " + title + "-" + episode + "-" + videoQuality + "p" + "'" + "]");
@@ -82,7 +98,7 @@ namespace HorribleSubsTorrentDownloader.Classes
                             if (node == null)
                             {
                                 int e = Convert.ToInt32(episode) + 1;
-                                Console.WriteLine("Anime: " + title + "episode: " + e + " is not yet released or not found" );
+                                Console.WriteLine("Anime: " + title + "episode: " + e + " is not yet released or not found");
                                 i++;
                                 continue;
                             }
@@ -106,7 +122,7 @@ namespace HorribleSubsTorrentDownloader.Classes
                         //move onto the next episode for the anime
                         if (DownloadTorrent(torrentLink))
                         {
-                            Console.WriteLine(title.Replace("-", " ") + " " +  episode.ToString() + " downloaded torrent.");
+                            Console.WriteLine(title.Replace("-", " ") + " " + episode.ToString() + " downloaded torrent.");
                             Thread.Sleep(850);
                             episodes[i] += 1;
                             FileHandler.UpdateEpisode(titles, episodes);
@@ -117,6 +133,7 @@ namespace HorribleSubsTorrentDownloader.Classes
                     }
                 }
             }
+            
             catch (Selenium.SeleniumException) { Program.RestartApplication(); }
             catch (OpenQA.Selenium.WebDriverTimeoutException) { Program.RestartApplication(); }
             catch (OpenQA.Selenium.DriverServiceNotFoundException)

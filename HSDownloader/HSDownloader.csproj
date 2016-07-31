@@ -42,6 +42,10 @@
       <HintPath>..\packages\HtmlAgilityPack.1.4.9\lib\Net45\HtmlAgilityPack.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.9.0.1-beta1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Selenium.WebDriverBackedSelenium, Version=2.53.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Selenium.WebDriverBackedSelenium.2.53.0\lib\net40\Selenium.WebDriverBackedSelenium.dll</HintPath>
       <Private>True</Private>
@@ -69,9 +73,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\Anime.cs" />
     <Compile Include="Classes\Dependencies.cs" />
     <Compile Include="Classes\FileHandler.cs" />
     <Compile Include="Classes\HorribleSubs.cs" />
+    <Compile Include="Json\JsonHandler.cs" />
     <Compile Include="Classes\Tracker.cs" />
     <Compile Include="Enums\Enums.cs" />
     <Compile Include="Program.cs" />
