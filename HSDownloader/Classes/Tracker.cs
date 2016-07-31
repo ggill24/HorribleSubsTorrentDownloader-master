@@ -68,7 +68,7 @@ namespace HorribleSubsTorrentDownloader.Classes
                             while (blackListedCharacters.Any(title.Contains))
                             {
                                 var charToReplace = titles[i].ElementAt(titles[i].IndexOfAny(blackListedCharacters));
-                                title = titles[i].Replace(charToReplace, '-');
+                                title = titles[i].Replace(charToReplace, '-').ToLower();
                             }
                              
 
